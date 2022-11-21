@@ -6,6 +6,6 @@ router = routers.SimpleRouter()
 router.register(r'user', UserViewSet),
 router.register(r'conta', ContaViewSet),
 router.register(r'cartao', CartoesViewSet),
-router.register(r'trasacao', TransacoesViewSet),
+router.register(r'transacao', TransacoesViewSet),
 
 urlpatterns = router.urls

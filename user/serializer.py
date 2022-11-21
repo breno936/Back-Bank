@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ContaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conta
-        fields = ['id', 'agencia', 'conta', 'saldo', 'user_id']
+        fields = ['agencia', 'conta', 'saldo', 'user_id']
 
 class CartoesSerializer(serializers.ModelSerializer):
     class Meta:
