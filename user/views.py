@@ -1,3 +1,5 @@
+import decimal
+import random
 from django.shortcuts import render
 from rest_framework import viewsets
 from user.models import User, Conta, Cartoes, Transacoes
@@ -7,6 +9,13 @@ import pdb
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        agencia = random.randint(1000, 8000)
+        conta = random.randint(10000000, 80000000)
+        novaConta = {'agencia':agencia, 'conta':conta, 'user':self.pk, 'saldo':decimal.Decimal(1000)}
+        serializerConta = ContaSerializer(data=novaConta)
+        return super().create(request, *args, **kwargs)
 
 class ContaViewSet(viewsets.ModelViewSet):
     queryset = Conta.objects.all()
@@ -22,22 +31,23 @@ class TransacoesViewSet(viewsets.ModelViewSet):
     serializer_class = TransacoesSerializer
 
     def create(self, request, *args, **kwargs):
-      
+        print("aqui")
         remetente = Conta.objects.get(pk = self.request.data['contaRemetente'])
         destinatario = Conta.objects.get(pk = self.request.data['contaDestinatario'])
 
-       
-        remetente.saldo -= self.request.data['valor']
+        if remetente.saldo >= self.request.data['valor']:
+            remetente.saldo -= decimal.Decimal(self.request.data['valor'])
+            destinatario.saldo += decimal.Decimal(self.request.data['valor'])
 
-        atualizarSaldoContaRemetente = {'agencia':remetente.agencia, 'conta': remetente.conta, 'user':remetente.user, 'saldo':remetente.saldo }
-        atualizarSaldoContaDestinatario = {'agencia':destinatario.agencia, 'conta': destinatario.conta, 'user':destinatario.user, 'saldo':destinatario.saldo }
-        print("aqui3")
-        serializerRemetente = ContaSerializer(remetente, data = atualizarSaldoContaRemetente)
-        serializerDestinatario = ContaSerializer(destinatario, data = atualizarSaldoContaDestinatario)
-        if serializerRemetente.is_valid() and serializerDestinatario.is_valid():
-            serializerDestinatario.save()
-            serializerRemetente.save()
-            return super().create(request, *args, **kwargs)
+            atualizarSaldoContaRemetente = {'agencia':remetente.agencia, 'conta': remetente.conta, 'user':remetente.user, 'saldo':remetente.saldo }
+            atualizarSaldoContaDestinatario = {'agencia':destinatario.agencia, 'conta': destinatario.conta, 'user':destinatario.user, 'saldo':destinatario.saldo }
+            print("aqui3")
+            serializerRemetente = ContaSerializer(remetente, data = atualizarSaldoContaRemetente)
+            serializerDestinatario = ContaSerializer(destinatario, data = atualizarSaldoContaDestinatario)
+            if serializerRemetente.is_valid() and serializerDestinatario.is_valid():
+                serializerDestinatario.save()
+                serializerRemetente.save()
+                return super().create(request, *args, **kwargs)
     
         
            
