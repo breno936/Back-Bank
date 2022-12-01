@@ -4,7 +4,7 @@ from user.models import User, Conta, Cartoes, Transacoes
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'data_nasc', 'hash_password', 'salt_password']
+        fields = ['id', 'name', 'email', 'data_nasc', 'hash_password', 'salt_password']
 
 class ContaSerializer(serializers.ModelSerializer):
     class Meta:

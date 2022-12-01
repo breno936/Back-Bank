@@ -2,7 +2,7 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
+    email = models.EmailField(max_length=200, default='a@a')
     data_nasc = models.DateField()
     hash_password = models.CharField(max_length=200)
     salt_password = models.CharField(max_length=200)

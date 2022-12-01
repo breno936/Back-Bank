@@ -1,21 +1,35 @@
 import decimal
+from http.client import HTTPResponse
 import random
 from django.shortcuts import render
 from rest_framework import viewsets
 from user.models import User, Conta, Cartoes, Transacoes
 from user.serializer import UserSerializer, ContaSerializer, CartoesSerializer, TransacoesSerializer
 import pdb
+from rest_framework.response import Response
+from rest_framework import status
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        user_login = User.objects.filter(name = self.request.data['name'])
+        print(user_login)
+        return super().retrieve(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
-        agencia = random.randint(1000, 8000)
-        conta = random.randint(10000000, 80000000)
-        novaConta = {'agencia':agencia, 'conta':conta, 'user':self.pk, 'saldo':decimal.Decimal(1000)}
-        serializerConta = ContaSerializer(data=novaConta)
-        return super().create(request, *args, **kwargs)
+        super().create(request, *args, **kwargs)
+        usuario_criado = User.objects.last()
+        # print(usuario_criado.id)
+        # agencia = random.randint(1000, 8000)
+        # conta = random.randint(10000000, 80000000)
+        # novaConta = {'agencia':agencia, 'conta':conta, 'user':7, 'saldo':decimal.Decimal(1000)}
+        # serializerConta = ContaSerializer(data=novaConta)
+        # if serializerConta.is_valid():
+        #     serializerConta.instance.
+        #     serializerConta.save()
+        return Response(status=status.HTTP_200_OK)
 
 class ContaViewSet(viewsets.ModelViewSet):
     queryset = Conta.objects.all()
