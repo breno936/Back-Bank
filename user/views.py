@@ -45,6 +45,21 @@ class LogarViewSet(viewsets.ModelViewSet):
         else:
             return Response(data="Nenhum usuário enontrado", status=status.HTTP_404_NOT_FOUND)
       
+class GetContaViewSet(viewsets.ModelViewSet):
+    queryset = Conta.objects.all()
+    serializer_class = ContaSerializer
+    
+    def create(self, request, *args, **kwargs):
+        conta = Conta.objects.filter(user_id = self.request.data['idUser'])
+       
+        if conta.count() > 0:
+            print("hummm")
+            conta = ContaSerializer(conta, many=True)
+            return Response(data=conta.data, status=status.HTTP_200_OK)
+        else:
+            print("aaaaa")
+            return Response(data="Nenhum usuário encontrado", status=status.HTTP_404_NOT_FOUND)
+       
 
 class ContaViewSet(viewsets.ModelViewSet):
     queryset = Conta.objects.all()
